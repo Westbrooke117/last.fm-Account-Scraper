@@ -27,7 +27,7 @@ const api = rateLimit(axios.create(), {
     perMilliseconds: 50 // 1000 milliseconds = 1 second
 });
 
-const apiKey = "82d112e473f59ade0157abe4a47d4eb5"
+const apiKey = ""
 StartScraping("rj");
 
 async function StartScraping(rootUser) {
