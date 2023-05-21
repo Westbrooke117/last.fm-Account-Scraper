@@ -22,18 +22,17 @@ class User {
         }
     }
 }
-
 const api = rateLimit(axios.create(), {
     maxRequests: 10, // Limit to one request per second
     perMilliseconds: 50 // 1000 milliseconds = 1 second
 });
 
 const apiKey = "82d112e473f59ade0157abe4a47d4eb5"
+StartScraping("rj");
 
-let currentUser = "rj"
-apiIteration();
+async function StartScraping(rootUser) {
+    let currentUser = rootUser;
 
-async function apiIteration() {
     let stack = [currentUser];
     let completedUsers = [currentUser];
 
@@ -48,7 +47,8 @@ async function apiIteration() {
                 if(!completedUsers.some(s=>s===friend.name)){
                     completedUsers.push(friend.name);
                     stack.push(friend.name)
-                    await userGetInfo(friend);
+
+                    await getUserInfo(friend);
                 }
             }
         } catch (error) {
@@ -58,14 +58,15 @@ async function apiIteration() {
             }
         }
     }
-    console.log("We did it!")
+    console.log("Completed! There are no more users in the stack.")
 }
 
-function userGetInfo(user){
+function getUserInfo(user){
     api.get(`https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${user.name}&api_key=${apiKey}&format=json`)
         .then(function (response){
             const user = new User(response.data.user)
             user.saveAsCSV()
+
             console.log(`Successfully inserted "${user.name}"`)
         })
         .catch(function (error) {
