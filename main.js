@@ -1,10 +1,7 @@
-const express = require('express');
 const { appendFileSync } = require("fs")
 const axios = require("axios");
 const rateLimit = require('axios-rate-limit');
-const {response} = require("express");
-const app = express();
-app.use(express.json());
+
 class User {
     constructor(response) {
         this.name = response.name;
@@ -31,9 +28,11 @@ const api = rateLimit(axios.create(), {
     perMilliseconds: 50 // 1000 milliseconds = 1 second
 });
 
-let currentUser = "rj"
+const apiKey = "82d112e473f59ade0157abe4a47d4eb5"
 
+let currentUser = "rj"
 apiIteration();
+
 async function apiIteration() {
     let stack = [currentUser];
     let completedUsers = [currentUser];
@@ -63,7 +62,7 @@ async function apiIteration() {
 }
 
 function userGetInfo(user){
-    api.get(`https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${user.name}&api_key=82d112e473f59ade0157abe4a47d4eb5&format=json`)
+    api.get(`https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${user.name}&api_key=${apiKey}&format=json`)
         .then(function (response){
             const user = new User(response.data.user)
             user.saveAsCSV()
@@ -74,11 +73,6 @@ function userGetInfo(user){
                 console.log(`${error.name}: ${error.code}\n${error.message}`);
         });
 }
-
-//Run server on localhost at port 3000
-app.listen(8000, () => {
-    console.log('Server running at http://localhost:8000');
-});
 
 function convertDateToYearMonthDay(unix){
     const date = new Date(unix);
