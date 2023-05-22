@@ -1,6 +1,7 @@
 const { appendFileSync } = require("fs")
 const axios = require("axios");
 const rateLimit = require('axios-rate-limit');
+appendFileSync("scraped_data.csv", "username,country,date_registered,scrobbles,artists,albums,tracks,subscribed\n");
 
 class User {
     constructor(response) {
@@ -22,6 +23,7 @@ class User {
         }
     }
 }
+
 const api = rateLimit(axios.create(), {
     maxRequests: 10, // Limit to one request per second
     perMilliseconds: 50 // 1000 milliseconds = 1 second
@@ -39,7 +41,7 @@ async function StartScraping(rootUser) {
     while(stack.length !== 0){
         currentUser = stack.shift();
         try {
-            const response = await api.get(`https://ws.audioscrobbler.com/2.0/?method=user.getfriends&user=${currentUser}&api_key=82d112e473f59ade0157abe4a47d4eb5&format=json`);
+            const response = await api.get(`https://ws.audioscrobbler.com/2.0/?method=user.getfriends&user=${currentUser}&api_key=${apiKey}&format=json`);
             const friendCount = response.data.friends.user.length;
             for (let i = 0; i < friendCount; i++) {
                 let friend = response.data.friends.user[i];
