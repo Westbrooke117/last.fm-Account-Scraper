@@ -29,9 +29,10 @@ const api = rateLimit(axios.create(), {
     perMilliseconds: 50 // 1000 milliseconds = 1 second
 });
 
-const apiKey = ""
-StartScraping("rj");
+const apiKey = "82d112e473f59ade0157abe4a47d4eb5"
+StartScraping("westbrooke117");
 
+let completedCount = 0;
 async function StartScraping(rootUser) {
     let currentUser = rootUser;
 
@@ -68,8 +69,9 @@ function getUserInfo(user){
         .then(function (response){
             const user = new User(response.data.user)
             user.saveAsCSV()
+            completedCount++
 
-            console.log(`Successfully inserted "${user.name}"`)
+            console.log(`[${completedCount}] Successfully inserted "${user.name}"`)
         })
         .catch(function (error) {
             if(error.response.data.error !== 6)
